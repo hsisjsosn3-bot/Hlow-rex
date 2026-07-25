@@ -24,7 +24,7 @@ from telegram.ext import (
 # SECURITY: put your real token in an environment variable instead of hardcoding it.
 # The token below was exposed in a previous version of this file -- regenerate it
 # via @BotFather (/revoke) and export the new one as BOT_TOKEN before relying on this.
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "8921796203:AAEDwNvlXIbHVAwtsXM9r5D-2fvUDz-DNgg")
 
 HOLWIN_INVITE_CODE = "WLRPSY"
 REX_INVITE_CODE = "O6NVYX"
