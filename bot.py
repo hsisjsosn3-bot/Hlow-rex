@@ -21,10 +21,10 @@ from telegram.ext import (
     ContextTypes,
 )
 
-# SECURITY: put your real token in an environment variable instead of hardcoding it.
-# The token below was exposed in a previous version of this file -- regenerate it
-# via @BotFather (/revoke) and export the new one as BOT_TOKEN before relying on this.
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "8921796203:AAEDwNvlXIbHVAwtsXM9r5D-2fvUDz-DNgg")
+# SECURITY: Get token from environment variable
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+if not BOT_TOKEN:
+    raise ValueError("BOT_TOKEN environment variable is not set!")
 
 HOLWIN_INVITE_CODE = "WLRPSY"
 REX_INVITE_CODE = "O6NVYX"
@@ -78,10 +78,6 @@ Base.metadata.create_all(engine)
 
 MOBILE, OTP, PASSWORD, CONFIRM = range(4)
 
-# BUG FIX: the old regex was r"([_*[]()~`>#+-=|{}.!\\])" which is invalid
-# (unescaped '[' inside a character class, and the replacement used \u0001
-# instead of a backreference to the captured character). This version
-# correctly escapes every MarkdownV2 special character.
 _MDV2_SPECIAL = re.compile(r'([_*\[\]()~`>#+\-=|{}.!\\])')
 
 
@@ -361,8 +357,6 @@ async def platform_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def mobile_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mobile = update.message.text.strip()
-    # BUG FIX: original regex was r"^d{10,15}$" (missing backslash), so it
-    # never matched a real phone number and every registration was rejected.
     if not re.match(r"^\d{10,15}$", mobile):
         await update.message.reply_text("❌ Invalid. Enter 10-15 digits:", reply_markup=back_keyboard())
         return MOBILE
@@ -588,10 +582,10 @@ conv_handler = ConversationHandler(
 
 
 def main():
-    if not BOT_TOKEN or BOT_TOKEN.count(":") != 1:
-        raise SystemExit("BOT_TOKEN is missing or malformed. Set it via the BOT_TOKEN environment variable.")
+    if not BOT_TOKEN:
+        raise SystemExit("BOT_TOKEN is missing. Set it via the BOT_TOKEN environment variable.")
 
-    app = Application.builder().token(BOT_TOKEN).concurrent_updates(False).build()
+    app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("stats", stats_cmd))
